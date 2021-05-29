@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import logo from "./logo.svg";
-import "./App.css";
 
 function App() {
   const [visitorId, setVisitorId] = useState("");
@@ -14,9 +12,11 @@ function App() {
       });
   }, []);
 
+  console.log(visitorId)
+
   return (
-    <div className="h-full w-full bg-red-600">
-      {visitorId}
+    <div className="h-128 w-128 bg-red-600">
+      
       
     </div>
   );

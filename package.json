@@ -8,8 +8,11 @@
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^3.1.2",
+    "@react-three/fiber": "^6.2.2",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "react-three-fiber": "^6.0.13",
+    "three": "^0.129.0"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",
