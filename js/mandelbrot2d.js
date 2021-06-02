@@ -11,8 +11,7 @@ ctx.canvas.height = HEIGHT;
 const REAL_SET = { start: -2, end: 1 };
 const IMAGINARY_SET = { start: -1, end: 1 };
 
-// generate 24 random colors
-const colors = [`rbg(255,0,0)`, `rbg(0,255,0)`, `rbg(0,0,0)`];
+const MAX_ITERATION = 80;
 
 function im_mult(c1, c2) {
   cp = {
@@ -58,65 +57,6 @@ function dot(c1, c2) {
 function self_dot(c) {
   return dot(c, c);
 }
-
-function HSVtoRGB(h, s, v) {
-  var r, g, b, i, f, p, q, t;
-  if (arguments.length === 1) {
-    (s = h.s), (v = h.v), (h = h.h);
-  }
-  i = Math.floor(h * 6);
-  f = h * 6 - i;
-  p = v * (1 - s);
-  q = v * (1 - f * s);
-  t = v * (1 - (1 - f) * s);
-  switch (i % 6) {
-    case 0:
-      (r = v), (g = t), (b = p);
-      break;
-    case 1:
-      (r = q), (g = v), (b = p);
-      break;
-    case 2:
-      (r = p), (g = v), (b = t);
-      break;
-    case 3:
-      (r = p), (g = q), (b = v);
-      break;
-    case 4:
-      (r = t), (g = p), (b = v);
-      break;
-    case 5:
-      (r = v), (g = p), (b = q);
-      break;
-  }
-  return {
-    r: Math.round(r * 255),
-    g: Math.round(g * 255),
-    b: Math.round(b * 255),
-  };
-}
-
-function componentToHex(c) {
-  var hex = c.toString(16);
-  return hex.length == 1 ? "0" + hex : hex;
-}
-
-function hsv_to_hex(h, s, v, i = false) {
-  color = HSVtoRGB(h, s, v);
-  return (
-    "#" +
-    componentToHex(Math.floor(color.r)) +
-    componentToHex(Math.floor(color.g)) +
-    componentToHex(Math.floor(color.b))
-  );
-}
-
-function rgb_to_hex(r, g, b) {
-  return componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-const l = [];
-const MAX_ITERATION = 80;
 
 function draw() {
   // iterate through each pixel
