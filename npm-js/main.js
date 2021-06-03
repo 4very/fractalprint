@@ -1,6 +1,12 @@
 import './style.css'
 
-document.querySelector('#app').innerHTML = `
-  <h1>Hello Vite!</h1>
-  <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
-`
+import * as PIXI from 'pixi.js'
+
+
+
+
+let app = new PIXI.Application({width: 1000, height: 700});
+document.body.appendChild(app.view);
+
+
+
