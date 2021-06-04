@@ -1,8 +1,8 @@
 import "./style.css";
 
 import * as PIXI from "pixi.js";
-import { mandelbrot2d, old_shader } from "./shaders";
-const shader = mandelbrot2d;
+import { mandelbrot2d, example_shader, julia } from "./shaders";
+const shader = julia;
 
 
 const WIDTH = 1000;

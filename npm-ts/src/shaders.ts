@@ -17,30 +17,26 @@ vec2 yrange = vec2(-1,1);
 const int MAX_ITERATIONS = 512;
 const int AA = 2;
 
-float mandelbrot( in vec2 c )
-{
-    #if 1
-    {
-        float c2 = dot(c, c);
-        // skip computation inside M1 - http://iquilezles.org/www/articles/mset_1bulb/mset1bulb.htm
-        if( 256.0*c2*c2 - 96.0*c2 + 32.0*c.x - 3.0 < 0.0 ) return 0.0;
-        // skip computation inside M2 - http://iquilezles.org/www/articles/mset_2bulb/mset2bulb.htm
-        if( 16.0*(c2+2.0*c.x+1.0) - 1.0 < 0.0 ) return 0.0;
-    }
-    #endif
+float mandelbrot( in vec2 c ){
+   
+   float c2 = dot(c, c);
+   // skip computation inside M1 - http://iquilezles.org/www/articles/mset_1bulb/mset1bulb.htm
+   if( 256.0*c2*c2 - 96.0*c2 + 32.0*c.x - 3.0 < 0.0 ) return 0.0;
+   // skip computation inside M2 - http://iquilezles.org/www/articles/mset_2bulb/mset2bulb.htm
+   if( 16.0*(c2+2.0*c.x+1.0) - 1.0 < 0.0 ) return 0.0;
 
 
     const float B = 256.0;
     float l = 0.0;
     vec2 z  = vec2(0.0);
-    for( int i=0; i<512; i++ )
+    for( int i=0; i<MAX_ITERATIONS; i++ )
     {
         z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
         if( dot(z,z)>(B*B) ) break;
         l += 1.0;
     }
 
-    if( l>511.0 ) return 0.0;
+    if( l>float(MAX_ITERATIONS)-1.0 ) return 0.0;
     float sl = l - log2(log2(dot(z,z))) + 4.0;
 
 
@@ -53,17 +49,6 @@ float mandelbrot( in vec2 c )
 void main(){
     vec3 col = vec3(0.0);
     
-
-//     vec2 p = (-u_resolution.xy + 2.0*gl_FragCoord.xy)/u_resolution.y;
-//     float time = u_time;
-
-//     float zoo = 0.62 + 0.38*cos(.07*time);
-//     float coa = cos( 0.15*(1.0-zoo)*time );
-//     float sia = sin( 0.15*(1.0-zoo)*time );
-//     zoo = pow( zoo,8.0);
-//     vec2 xy = vec2( p.x*coa-p.y*sia, p.x*sia+p.y*coa);
-//     vec2 c = vec2(-.745,.186) + xy*zoo;
-    
     vec2 cord = vec2(xrange.x + (gl_FragCoord.x/u_resolution.x) * (xrange.y-xrange.x),yrange.x + (gl_FragCoord.y/u_resolution.y) * (yrange.y-yrange.x));
     float l = mandelbrot(cord);
 
@@ -72,7 +57,7 @@ void main(){
     gl_FragColor = vec4( col, 1.0 );
 }`;
 
-export var old_shader: string = `
+export var example_shader: string = `
 precision highp float;
 varying vec2 vTextureCoord;
 uniform vec2 mouse;
@@ -147,3 +132,75 @@ void main() {
   */
 }
 `;
+
+export var julia: string = `precision highp float;
+
+
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+vec2 xrange = vec2(-1,1);
+vec2 yrange = vec2(-1,1);
+
+vec2 c = vec2(0.360,0.390);
+
+
+const int MAX_ITERATIONS = 512;
+
+float mandelbrot( in vec2 c )
+{
+    float c2 = dot(c, c);
+    // skip computation inside M1 - http://iquilezles.org/www/articles/mset_1bulb/mset1bulb.htm
+    if( 256.0*c2*c2 - 96.0*c2 + 32.0*c.x - 3.0 < 0.0 ) return 0.0;
+    // skip computation inside M2 - http://iquilezles.org/www/articles/mset_2bulb/mset2bulb.htm
+    if( 16.0*(c2+2.0*c.x+1.0) - 1.0 < 0.0 ) return 0.0;
+
+
+    const float B = 256.0;
+    float l = 0.0;
+    vec2 z  = vec2(0.0);
+    for( int i=0; i<512; i++ )
+    {
+        z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
+        if( dot(z,z)>(B*B) ) break;
+        l += 1.0;
+    }
+
+    if( l>511.0 ) return 0.0;
+    float sl = l - log2(log2(dot(z,z))) + 4.0;
+
+
+    return sl;
+}
+
+
+float julia( in vec2 z ){
+    
+    float n = 0.0;
+    const float B = 256.0;
+
+    
+    for( int i=0; i<512; i++ ){
+        z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
+        if( dot(z,z)>(B*B) ) break;
+        n += 1.0;
+    }
+    if( n>511.0 ) return 0.0;
+    
+    float sl = n - log2(log2(dot(z,z))) + 4.0;
+    return sl;
+}
+
+
+
+void main(){
+    vec3 col = vec3(0.0);
+    
+    vec2 cord = vec2(xrange.x + (gl_FragCoord.x/u_resolution.x) * (xrange.y-xrange.x),yrange.x + (gl_FragCoord.y/u_resolution.y) * (yrange.y-yrange.x));
+    float l = julia(cord);
+
+    col += 0.5 + 0.5*cos( 3.0 + l*0.15 + vec3(0.0,0.6,1.0));
+
+    gl_FragColor = vec4( col, 1.0 );
+}`;
