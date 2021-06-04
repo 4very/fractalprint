@@ -133,7 +133,11 @@ void main() {
 }
 `;
 
-export var julia: string = `precision highp float;
+export var julia: string = `// Author:
+// Title:
+
+
+precision highp float;
 
 
 uniform vec2 u_resolution;
@@ -148,32 +152,6 @@ vec2 c = vec2(0.360,0.390);
 
 const int MAX_ITERATIONS = 512;
 
-float mandelbrot( in vec2 c )
-{
-    float c2 = dot(c, c);
-    // skip computation inside M1 - http://iquilezles.org/www/articles/mset_1bulb/mset1bulb.htm
-    if( 256.0*c2*c2 - 96.0*c2 + 32.0*c.x - 3.0 < 0.0 ) return 0.0;
-    // skip computation inside M2 - http://iquilezles.org/www/articles/mset_2bulb/mset2bulb.htm
-    if( 16.0*(c2+2.0*c.x+1.0) - 1.0 < 0.0 ) return 0.0;
-
-
-    const float B = 256.0;
-    float l = 0.0;
-    vec2 z  = vec2(0.0);
-    for( int i=0; i<512; i++ )
-    {
-        z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
-        if( dot(z,z)>(B*B) ) break;
-        l += 1.0;
-    }
-
-    if( l>511.0 ) return 0.0;
-    float sl = l - log2(log2(dot(z,z))) + 4.0;
-
-
-    return sl;
-}
-
 
 float julia( in vec2 z ){
     
@@ -181,12 +159,12 @@ float julia( in vec2 z ){
     const float B = 256.0;
 
     
-    for( int i=0; i<512; i++ ){
+    for( int i=0; i<MAX_ITERATIONS; i++ ){
         z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
         if( dot(z,z)>(B*B) ) break;
         n += 1.0;
     }
-    if( n>511.0 ) return 0.0;
+    if( n>float(MAX_ITERATIONS)-1.0 ) return 0.0;
     
     float sl = n - log2(log2(dot(z,z))) + 4.0;
     return sl;
