@@ -1,10 +1,12 @@
 import "./style.css";
 
 import * as PIXI from "pixi.js";
-import { shader, old_shader } from "./shaders";
+import { mandelbrot2d, old_shader } from "./shaders";
+const shader = mandelbrot2d;
 
-const WIDTH = 900;
-const HEIGHT = 900;
+
+const WIDTH = 1000;
+const HEIGHT = 1000;
 
 let app = new PIXI.Application({ width: WIDTH, height: HEIGHT });
 
@@ -19,7 +21,11 @@ container.filterArea = new PIXI.Rectangle(
 );
 app.stage.addChild(container);
 
-const filter = new PIXI.Filter(undefined, shader, {
+
+const fixed_shader = shader.replace("uniform vec2 u_resolution;","uniform vec4 inputSize;").replaceAll("u_resolution","inputSize");
+console.log(fixed_shader)
+
+const filter = new PIXI.Filter(undefined, fixed_shader, {
   mouse: new PIXI.Point(),
 });
 container.filters = [filter];
